@@ -14,11 +14,15 @@ struct LLUProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (LLUEntry) -> Void) {
-        completion(LLUEntry(date: Date(), snapshot: SnapshotStore.load() ?? .sample))
+        let s = SnapshotStore.load()
+        if s == nil { NSLog("LLUWidgetExtension: snapshot missing, showing sample") }
+        completion(LLUEntry(date: Date(), snapshot: s ?? .sample))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<LLUEntry>) -> Void) {
-        let entry = LLUEntry(date: Date(), snapshot: SnapshotStore.load() ?? .sample)
+        let s = SnapshotStore.load()
+        if s == nil { NSLog("LLUWidgetExtension: snapshot missing, showing sample") }
+        let entry = LLUEntry(date: Date(), snapshot: s ?? .sample)
         let next = Calendar.current.date(byAdding: .second, value: 120, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
