@@ -41,6 +41,10 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ru.romanovgleb.llu.widget
+    entitlements:
+      path: Widget/LLUWidgetExtension.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
     info:
       path: Widget/Info.plist
       properties:

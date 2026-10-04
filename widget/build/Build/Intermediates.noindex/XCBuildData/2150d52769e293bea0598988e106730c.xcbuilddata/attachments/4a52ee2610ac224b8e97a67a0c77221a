@@ -1,0 +1,26 @@
+{
+  "" : {
+    "const-values" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.swiftconstvalues",
+    "dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.d",
+    "diagnostics" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.dia",
+    "emit-module-dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary-emit-module.dia",
+    "pch" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.swiftdeps"
+  },
+  "/Users/gleb/base/code/llu/widget/App/LLUApp.swift" : {
+    "index-unit-output-path" : "/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUApp.o",
+    "llvm-bc" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUApp.bc",
+    "object" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUApp.o"
+  },
+  "/Users/gleb/base/code/llu/widget/App/LLUPump.swift" : {
+    "index-unit-output-path" : "/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUPump.o",
+    "llvm-bc" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUPump.bc",
+    "object" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUPump.o"
+  },
+  "/Users/gleb/base/code/llu/widget/Shared/LLUModel.swift" : {
+    "index-unit-output-path" : "/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUModel.o",
+    "llvm-bc" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUModel.bc",
+    "object" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUModel.o"
+  }
+}

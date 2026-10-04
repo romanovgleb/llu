@@ -15,10 +15,11 @@ does this when `~/base/code/llu` exists). Needs Python 3 with `rich`
 ## Mac widget
 
 `widget/` holds a native macOS WidgetKit widget (Notification Center /
-desktop) that renders the same numbers. A menu-bar pump app runs
-`llu --json` every 60 s, writes a snapshot to
-`~/Library/Application Support/LLUWidget/snapshot.json`, and reloads the
-widget timeline. Build: `widget/build.sh` (requires full Xcode).
+desktop) that renders the same numbers. The unsandboxed menu-bar pump app runs
+`llu --json` every 60 s and writes the snapshot into the widget extension's
+sandbox container (`~/Library/Containers/ru.romanovgleb.llu.widget/Data/...`),
+then reloads the widget timeline. Build: `widget/build.sh` (requires full
+Xcode; the extension is sandboxed — macOS 26 requirement).
 
 Providers and their sources are documented in the pack:
 `~/.agents/skills/llm-finance/REFERENCE-usage.md`.

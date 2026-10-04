@@ -1,0 +1,21 @@
+{
+  "" : {
+    "const-values" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary.swiftconstvalues",
+    "dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary.d",
+    "diagnostics" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary.dia",
+    "emit-module-dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary-emit-module.dia",
+    "pch" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgetExtension-primary.swiftdeps"
+  },
+  "/Users/gleb/base/code/llu/widget/Shared/LLUModel.swift" : {
+    "index-unit-output-path" : "/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUModel.o",
+    "llvm-bc" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUModel.bc",
+    "object" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUModel.o"
+  },
+  "/Users/gleb/base/code/llu/widget/Widget/LLUWidgets.swift" : {
+    "index-unit-output-path" : "/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgets.o",
+    "llvm-bc" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgets.bc",
+    "object" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetExtension.build/Objects-normal/arm64/LLUWidgets.o"
+  }
+}

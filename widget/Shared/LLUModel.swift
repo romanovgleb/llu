@@ -64,9 +64,13 @@ extension ProviderRow {
 }
 
 enum SnapshotStore {
+    /// The unsandboxed pump app writes here; the sandboxed extension reads the same
+    /// path — inside the extension's sandbox it binds to its own container.
+    static let groupId = "group.ru.romanovgleb.llu"   // unused, kept for docs
+
     static var url: URL {
         let dir = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/LLUWidget", isDirectory: true)
+            .appendingPathComponent("Library/Containers/ru.romanovgleb.llu.widget/Data/Library/Application Support/LLUWidget", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("snapshot.json")
     }

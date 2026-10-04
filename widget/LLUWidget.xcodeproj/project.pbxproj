@@ -45,7 +45,9 @@
 		673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUPump.swift; sourceTree = "<group>"; };
 		6E209076F30129316E0AE5D2 /* LLUWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUWidgets.swift; sourceTree = "<group>"; };
 		7328F30D1AF192100D70DCE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		96C22D363F1CFD4630C084EF /* LLUWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LLUWidgetExtension.entitlements; sourceTree = "<group>"; };
 		983CBD32AD4FC2287740FE28 /* LLUWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LLUWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB57F60B8152BF7DB15CB351 /* LLUWidgetApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LLUWidgetApp.entitlements; sourceTree = "<group>"; };
 		DC424174BAD85DA3953E9E16 /* LLUWidgetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LLUWidgetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E326306CA89D4C6521338C11 /* LLUModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -55,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				43168F96675E803CC0BBFD56 /* Info.plist */,
+				96C22D363F1CFD4630C084EF /* LLUWidgetExtension.entitlements */,
 				6E209076F30129316E0AE5D2 /* LLUWidgets.swift */,
 			);
 			path = Widget;
@@ -85,6 +88,7 @@
 				7328F30D1AF192100D70DCE0 /* Info.plist */,
 				407161488B800EEAAE562064 /* LLUApp.swift */,
 				673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */,
+				AB57F60B8152BF7DB15CB351 /* LLUWidgetApp.entitlements */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -209,6 +213,7 @@
 		035C66B2E3B104DC160C7FEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/LLUWidgetExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Widget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -291,6 +296,7 @@
 		6E4129504F2F8672D3E18C33 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/LLUWidgetExtension.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Widget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
