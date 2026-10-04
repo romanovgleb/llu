@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# llu — live LLM usage TUI. Canonical home: ~/base/code/llu (github.com/romanovgleb/llu).
+# Moved out of the agents-skills pack on 2026-10-04; pack keeps a pointer only.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACK_PY="${AGENTS_SKILLS_VENVS:-$HOME/.cache/agents-skills-venvs}/pack/bin/python"
+
+_has_rich() {
+  if [[ -x "$1" ]]; then
+    "$1" -c "import rich" >/dev/null 2>&1
+  else
+    command -v "$1" >/dev/null 2>&1 && "$1" -c "import rich" >/dev/null 2>&1
+  fi
+}
+
+PY=""
+if [[ -n "${SKILLS_PYTHON:-}" ]] && _has_rich "$SKILLS_PYTHON"; then
+  PY="$SKILLS_PYTHON"
+elif _has_rich "$PACK_PY"; then
+  PY="$PACK_PY"
+elif [[ -n "${SKILLS_ROOT:-}" ]] && _has_rich "$SKILLS_ROOT/.venv/bin/python"; then
+  PY="$SKILLS_ROOT/.venv/bin/python"
+elif _has_rich python3; then
+  PY=python3
+else
+  echo "llu: no Python with 'rich'. Install pack deps: pip install -r $HOME/.agents/skills/requirements.txt" >&2
+  exit 1
+fi
+exec "$PY" "$DIR/llm_usage.py" "$@"
