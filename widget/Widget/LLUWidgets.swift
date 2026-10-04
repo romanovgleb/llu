@@ -10,7 +10,7 @@ struct LLUEntry: TimelineEntry {
 
 struct LLUProvider: TimelineProvider {
     func placeholder(in context: Context) -> LLUEntry {
-        LLUEntry(date: Date(), snapshot: .sample)
+        LLUEntry(date: Date(), snapshot: SnapshotStore.load() ?? .sample)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (LLUEntry) -> Void) {
