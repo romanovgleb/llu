@@ -2,7 +2,13 @@
 # llu — live LLM usage TUI. Canonical home: ~/base/code/llu (github.com/romanovgleb/llu).
 # Moved out of the agents-skills pack on 2026-10-04; pack keeps a pointer only.
 set -euo pipefail
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SELF="${BASH_SOURCE[0]}"
+while [[ -L "$SELF" ]]; do
+  TGT="$(readlink "$SELF")"
+  [[ "$TGT" = /* ]] || TGT="$(dirname "$SELF")/$TGT"
+  SELF="$TGT"
+done
+DIR="$(cd "$(dirname "$SELF")" && pwd)"
 PACK_PY="${AGENTS_SKILLS_VENVS:-$HOME/.cache/agents-skills-venvs}/pack/bin/python"
 
 _has_rich() {
