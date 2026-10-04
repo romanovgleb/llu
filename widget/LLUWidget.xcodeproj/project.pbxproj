@@ -1,0 +1,429 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06369AE25AA2AED8D0D5DEA6 /* LLUWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 983CBD32AD4FC2287740FE28 /* LLUWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C3850E44FC424269313CA98A /* LLUModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326306CA89D4C6521338C11 /* LLUModel.swift */; };
+		C5920AA36348210CCBF5929A /* LLUWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E209076F30129316E0AE5D2 /* LLUWidgets.swift */; };
+		CF9601ED156A0E916F79E23A /* LLUPump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */; };
+		EC4510A3417CB4F638F70486 /* LLUApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407161488B800EEAAE562064 /* LLUApp.swift */; };
+		FB739EE7C2245C39A03035D2 /* LLUModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326306CA89D4C6521338C11 /* LLUModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6D1E19445A5B174279657383 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7569F2AE9A9A446B7EAEE470 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7B6EC7C4E6EBC2FA6FA73D23;
+			remoteInfo = LLUWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		188813A475B4A2A60354B372 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				06369AE25AA2AED8D0D5DEA6 /* LLUWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		407161488B800EEAAE562064 /* LLUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUApp.swift; sourceTree = "<group>"; };
+		43168F96675E803CC0BBFD56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUPump.swift; sourceTree = "<group>"; };
+		6E209076F30129316E0AE5D2 /* LLUWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUWidgets.swift; sourceTree = "<group>"; };
+		7328F30D1AF192100D70DCE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		983CBD32AD4FC2287740FE28 /* LLUWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LLUWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC424174BAD85DA3953E9E16 /* LLUWidgetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LLUWidgetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E326306CA89D4C6521338C11 /* LLUModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		234971E645CA2DA133E80373 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				43168F96675E803CC0BBFD56 /* Info.plist */,
+				6E209076F30129316E0AE5D2 /* LLUWidgets.swift */,
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
+		28177CE75EDF57B40FFFEFA7 = {
+			isa = PBXGroup;
+			children = (
+				9730E64265D0D6A6118EC155 /* App */,
+				A35D169EA4452BAD7954D018 /* Shared */,
+				234971E645CA2DA133E80373 /* Widget */,
+				604888D12825D74B8B8A50D0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		604888D12825D74B8B8A50D0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC424174BAD85DA3953E9E16 /* LLUWidgetApp.app */,
+				983CBD32AD4FC2287740FE28 /* LLUWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9730E64265D0D6A6118EC155 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				7328F30D1AF192100D70DCE0 /* Info.plist */,
+				407161488B800EEAAE562064 /* LLUApp.swift */,
+				673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A35D169EA4452BAD7954D018 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				E326306CA89D4C6521338C11 /* LLUModel.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7B6EC7C4E6EBC2FA6FA73D23 /* LLUWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22301A0932CC7B2C900186C6 /* Build configuration list for PBXNativeTarget "LLUWidgetExtension" */;
+			buildPhases = (
+				B29F40F56147D41986C39BA1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LLUWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = LLUWidgetExtension;
+			productReference = 983CBD32AD4FC2287740FE28 /* LLUWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		9A2B6251432147454723A26D /* LLUWidgetApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4ECDE423EC05307B6642D695 /* Build configuration list for PBXNativeTarget "LLUWidgetApp" */;
+			buildPhases = (
+				6F769EB3D9FD196DBEE7824A /* Sources */,
+				188813A475B4A2A60354B372 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6EE2E822B7398A6FF596E358 /* PBXTargetDependency */,
+			);
+			name = LLUWidgetApp;
+			packageProductDependencies = (
+			);
+			productName = LLUWidgetApp;
+			productReference = DC424174BAD85DA3953E9E16 /* LLUWidgetApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7569F2AE9A9A446B7EAEE470 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7B6EC7C4E6EBC2FA6FA73D23 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					9A2B6251432147454723A26D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 8420C4DF4FCB9B04E6F27DCE /* Build configuration list for PBXProject "LLUWidget" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 28177CE75EDF57B40FFFEFA7;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 604888D12825D74B8B8A50D0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9A2B6251432147454723A26D /* LLUWidgetApp */,
+				7B6EC7C4E6EBC2FA6FA73D23 /* LLUWidgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6F769EB3D9FD196DBEE7824A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4510A3417CB4F638F70486 /* LLUApp.swift in Sources */,
+				FB739EE7C2245C39A03035D2 /* LLUModel.swift in Sources */,
+				CF9601ED156A0E916F79E23A /* LLUPump.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B29F40F56147D41986C39BA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3850E44FC424269313CA98A /* LLUModel.swift in Sources */,
+				C5920AA36348210CCBF5929A /* LLUWidgets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6EE2E822B7398A6FF596E358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7B6EC7C4E6EBC2FA6FA73D23 /* LLUWidgetExtension */;
+			targetProxy = 6D1E19445A5B174279657383 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		035C66B2E3B104DC160C7FEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Widget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetExtension;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		38242923B7047C8190620C5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		6E4129504F2F8672D3E18C33 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Widget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetExtension;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		8B437270B70FADF6529DB01C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetApp;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		907A48864F48BD385517B3CB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		B7CFFBC5466E2FBEB8BAF060 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetApp;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		22301A0932CC7B2C900186C6 /* Build configuration list for PBXNativeTarget "LLUWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				035C66B2E3B104DC160C7FEB /* Debug */,
+				6E4129504F2F8672D3E18C33 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4ECDE423EC05307B6642D695 /* Build configuration list for PBXNativeTarget "LLUWidgetApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B437270B70FADF6529DB01C /* Debug */,
+				B7CFFBC5466E2FBEB8BAF060 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8420C4DF4FCB9B04E6F27DCE /* Build configuration list for PBXProject "LLUWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38242923B7047C8190620C5E /* Debug */,
+				907A48864F48BD385517B3CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7569F2AE9A9A446B7EAEE470 /* Project object */;
+}
