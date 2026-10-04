@@ -1,0 +1,12 @@
+{
+  "/Users/gleb/base/code/llu/widget/App/LLUApp.swift" : {
+    "abi-baseline-json" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp.abi.json",
+    "const-values" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.swiftconstvalues",
+    "dependencies" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.d",
+    "diagnostics" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-primary.dia",
+    "objc-header" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp-Swift.h",
+    "swiftdoc" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp.swiftdoc",
+    "swiftmodule" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp.swiftmodule",
+    "swiftsourceinfo" : "/Users/gleb/base/code/llu/widget/build/Build/Intermediates.noindex/LLUWidget.build/Release/LLUWidgetApp.build/Objects-normal/arm64/LLUWidgetApp.swiftsourceinfo"
+  }
+}

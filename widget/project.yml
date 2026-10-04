@@ -23,6 +23,9 @@ targets:
     dependencies:
       - target: LLUWidgetExtension
         embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ru.romanovgleb.llu
     info:
       path: App/Info.plist
       properties:
@@ -35,6 +38,9 @@ targets:
     sources:
       - path: Widget
       - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ru.romanovgleb.llu.widget
     info:
       path: Widget/Info.plist
       properties:

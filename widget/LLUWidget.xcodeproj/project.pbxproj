@@ -216,7 +216,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.llu.widget;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -298,7 +298,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.llu.widget;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -313,7 +313,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetApp;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.llu;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -388,7 +388,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.LLUWidgetApp;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.romanovgleb.llu;
 				SDKROOT = macosx;
 			};
 			name = Release;

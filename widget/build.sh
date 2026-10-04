@@ -15,7 +15,7 @@ xcodebuild -project LLUWidget.xcodeproj \
   build
 
 rm -rf "/Applications/LLUWidget.app"
-cp -R "build/Build/Products/Release/LLUWidget.app" /Applications/
-open /Applications/LLUWidget.app
+cp -R "build/Build/Products/Release/LLUWidgetApp.app" "/Applications/LLUWidget.app"
+open "/Applications/LLUWidget.app"
 echo "Installed to /Applications/LLUWidget.app."
 echo "Open Notification Center → Edit Widgets → add 'LLM Usage'."

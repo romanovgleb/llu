@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'LLUWidgetApp' in project 'LLUWidget'
+➜ Explicit dependency on target 'LLUWidgetExtension' in project 'LLUWidget'
+Target 'LLUWidgetExtension' in project 'LLUWidget' (no dependencies)
