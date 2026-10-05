@@ -48,48 +48,6 @@
 			<key>uniqueIdentifier</key>
 			<string>52D2EB9E-E992-4D66-AB8B-FD4F0EC46B9A</string>
 		</dict>
-		<key>DE899CFA-27BE-4FEA-9296-7A1C8E21E798</key>
-		<dict>
-			<key>className</key>
-			<string>IDECommandLineBuildLog</string>
-			<key>documentTypeString</key>
-			<string>&lt;nil&gt;</string>
-			<key>domainType</key>
-			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
-			<key>fileName</key>
-			<string>DE899CFA-27BE-4FEA-9296-7A1C8E21E798.xcactivitylog</string>
-			<key>hasPrimaryLog</key>
-			<true/>
-			<key>primaryObservable</key>
-			<dict>
-				<key>highLevelStatus</key>
-				<string>E</string>
-				<key>totalNumberOfAnalyzerIssues</key>
-				<integer>0</integer>
-				<key>totalNumberOfErrors</key>
-				<integer>2</integer>
-				<key>totalNumberOfTestFailures</key>
-				<integer>0</integer>
-				<key>totalNumberOfWarnings</key>
-				<integer>0</integer>
-			</dict>
-			<key>schemeIdentifier-containerName</key>
-			<string>LLUWidget project</string>
-			<key>schemeIdentifier-schemeName</key>
-			<string>LLUWidgetApp</string>
-			<key>schemeIdentifier-sharedScheme</key>
-			<integer>1</integer>
-			<key>signature</key>
-			<string>Building project LLUWidget with scheme LLUWidgetApp and configuration Release</string>
-			<key>timeStartedRecording</key>
-			<real>812802336.27052796</real>
-			<key>timeStoppedRecording</key>
-			<real>812802336.63380301</real>
-			<key>title</key>
-			<string>Building project LLUWidget with scheme LLUWidgetApp and configuration Release</string>
-			<key>uniqueIdentifier</key>
-			<string>DE899CFA-27BE-4FEA-9296-7A1C8E21E798</string>
-		</dict>
 	</dict>
 </dict>
 </plist>

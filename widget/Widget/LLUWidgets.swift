@@ -48,6 +48,26 @@ struct LLUWidgetBundle: WidgetBundle {
     var body: some Widget { LLUUsageWidget() }
 }
 
+// MARK: - Groups (bb-style: mono logo + name + badge)
+
+struct GroupMeta {
+    let key: String
+    let logo: String
+    let name: String
+    let badge: String?
+
+    static let all: [GroupMeta] = [
+        GroupMeta(key: "CODEX", logo: "✳", name: "romanovgleb@gmail.com", badge: "Plus"),
+        GroupMeta(key: "CURSOR", logo: "⬡", name: "Cursor", badge: "Pro"),
+        GroupMeta(key: "GLM", logo: "Т", name: "GLM · Kimi · Grok", badge: "GLM lite"),
+        GroupMeta(key: "PAYG", logo: "$", name: "Pay-as-you-go", badge: nil),
+    ]
+
+    static func `for`(_ key: String) -> GroupMeta {
+        all.first { $0.key == key } ?? GroupMeta(key: key, logo: "•", name: key, badge: nil)
+    }
+}
+
 struct LLURootView: View {
     @Environment(\.widgetFamily) private var family
     let entry: LLUEntry
@@ -55,7 +75,7 @@ struct LLURootView: View {
     var body: some View {
         Group {
             let groups = Dictionary(grouping: entry.snapshot.providers, by: \.groupName)
-            let order = ["CODEX · PLUS", "CURSOR · PRO", "GLM · GROK · KIMI", "PAY-AS-YOU-GO"]
+            let order = ["CODEX", "CURSOR", "GLM", "PAYG"]
             switch family {
             case .systemSmall:
                 LLUSmallView(snapshot: entry.snapshot)
@@ -78,16 +98,33 @@ struct LLURootView: View {
     }
 
     private func groupBlock(name: String, rows: [ProviderRow]) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(name)
-                .font(.system(size: 8.5, weight: .bold))
-                .foregroundColor(.secondary)
-                .kerning(0.6)
+        let meta = GroupMeta.for(name)
+        return VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 6) {
+                Text(meta.logo)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
+                    .frame(width: 15)
+                Text(meta.name)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                if let badge = meta.badge {
+                    Spacer()
+                    Text(badge)
+                        .font(.system(size: 9.5, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 6).padding(.vertical, 1.5)
+                        .background(Color.secondary.opacity(0.14))
+                        .clipShape(Capsule())
+                }
+            }
+            .padding(.bottom, 2)
             ForEach(rows) { row in
                 RowView(row: row)
             }
         }
-        .padding(.top, 4)
+        .padding(.bottom, 9)
     }
 }
 

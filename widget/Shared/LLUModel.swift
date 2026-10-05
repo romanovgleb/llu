@@ -49,10 +49,10 @@ extension ProviderRow {
     var barIsGhost: Bool { kind == "balance" || kind == "count" }
 
     var groupName: String {
-        if name.hasPrefix("Codex") { return "CODEX · PLUS" }
-        if name.hasPrefix("Cursor") { return "CURSOR · PRO" }
-        if name.hasPrefix("GLM") || name.hasPrefix("Grok") || name.hasPrefix("Kimi") { return "GLM · GROK · KIMI" }
-        return "PAY-AS-YOU-GO"
+        if name.hasPrefix("Codex") { return "CODEX" }
+        if name.hasPrefix("Cursor") { return "CURSOR" }
+        if name.hasPrefix("GLM") || name.hasPrefix("Grok") || name.hasPrefix("Kimi") { return "GLM" }
+        return "PAYG"
     }
 }
 
