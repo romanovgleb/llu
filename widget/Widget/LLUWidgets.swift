@@ -53,24 +53,28 @@ struct LLURootView: View {
     let entry: LLUEntry
 
     var body: some View {
-        let groups = Dictionary(grouping: entry.snapshot.providers, by: \.groupName)
-        let order = ["CODEX · PLUS", "CURSOR · PRO", "GLM · GROK · KIMI", "PAY-AS-YOU-GO"]
-        switch family {
-        case .systemSmall:
-            LLUSmallView(snapshot: entry.snapshot)
-        case .systemMedium:
-            VStack(alignment: .leading, spacing: 0) {
-                ForEach(order.prefix(2), id: \.self) { g in
-                    groupBlock(name: g, rows: groups[g] ?? [])
+        Group {
+            let groups = Dictionary(grouping: entry.snapshot.providers, by: \.groupName)
+            let order = ["CODEX · PLUS", "CURSOR · PRO", "GLM · GROK · KIMI", "PAY-AS-YOU-GO"]
+            switch family {
+            case .systemSmall:
+                LLUSmallView(snapshot: entry.snapshot)
+            case .systemMedium:
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(order.prefix(2), id: \.self) { g in
+                        groupBlock(name: g, rows: groups[g] ?? [])
+                    }
                 }
-            }
-        default:
-            VStack(alignment: .leading, spacing: 0) {
-                ForEach(order, id: \.self) { g in
-                    groupBlock(name: g, rows: groups[g] ?? [])
+            default:
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(order, id: \.self) { g in
+                        groupBlock(name: g, rows: groups[g] ?? [])
+                    }
                 }
             }
         }
+        .padding(.horizontal, 13)
+        .padding(.vertical, 9)
     }
 
     private func groupBlock(name: String, rows: [ProviderRow]) -> some View {
