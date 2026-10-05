@@ -43,7 +43,7 @@
     "overrides" : {
       "commandLine" : {
         "table" : {
-          "CODE_SIGN_IDENTITY" : "Conduit Local Signing",
+          "CODE_SIGN_IDENTITY" : "-",
           "CODE_SIGN_STYLE" : "Manual",
           "DEVELOPMENT_TEAM" : ""
         }

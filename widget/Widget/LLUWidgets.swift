@@ -39,6 +39,7 @@ struct LLUUsageWidget: Widget {
         .configurationDisplayName("LLM Usage")
         .description("llu quotas, spend and resets")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
     }
 }
 
@@ -97,16 +98,23 @@ struct RowView: View {
                 .font(.system(size: 11))
                 .foregroundColor(row.ok ? .primary : .red)
                 .lineLimit(1)
-                .frame(width: 58, alignment: .leading)
+                .frame(width: 56, alignment: .leading)
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.secondary.opacity(0.22))
+                    Capsule().fill(Color.secondary.opacity(0.10))
                     Capsule()
-                        .fill(row.ok ? row.barColor.opacity(row.barIsGhost ? 0.35 : 0.92) : .red)
+                        .fill(LinearGradient(
+                            stops: [
+                                .init(color: Color.primary.opacity(0.45), location: 0),
+                                .init(color: Color.primary.opacity(0.95), location: 1),
+                            ],
+                            startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(2, geo.size.width * min(row.pct, 100) / 100))
+                        .opacity(row.barIsGhost ? 0.35 : 1)
                 }
             }
-            .frame(height: 4)
+            .frame(height: 2)
+            .padding(.vertical, 1)
             Text(row.value)
                 .font(.system(size: 11, weight: .semibold))
                 .monospacedDigit()

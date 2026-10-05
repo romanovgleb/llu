@@ -2,9 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LastAccessedDate</key>
-	<date>2026-10-05T12:45:44Z</date>
-	<key>WorkspacePath</key>
-	<string>/Users/gleb/base/code/llu/widget/LLUWidget.xcodeproj</string>
+	<key>com.apple.security.get-task-allow</key>
+	<true/>
 </dict>
 </plist>

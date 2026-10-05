@@ -306,16 +306,16 @@ def _cursor_token_api_key() -> str | None:
 def _cursor_access_tokens() -> list[str]:
     """Candidate JWTs in preference order; duplicates dropped.
 
-    Prefer agent Keychain (``cursor-user`` first), then auth.json, API-key
-    exchange, IDE DB. Callers must try until one authenticates — a stale
-    Keychain JWT often sits ahead of the live seat.
+    auth.json first — it is the agent CLI's live login and matches the
+    dashboard account. Keychain items (``cursor-user``, then ``cursor``) are
+    fallback only: after a seat switch they keep a dead seat whose JWT
+    intermittently returns 401 *and* 200, so a keychain-first order makes the
+    widget flip between accounts (Oct 2026: phantom $1.00 / Oct 30 cycle
+    ahead of the real $138 / Oct 16 one). Then API-key exchange, IDE DB.
+    Callers must still try until one authenticates.
     """
     seen: set[str] = set()
     out: list[str] = []
-    for tok in _cursor_tokens_keychain():
-        if tok not in seen:
-            seen.add(tok)
-            out.append(tok)
     for getter in (
         _cursor_token_auth_json,
         _cursor_token_api_key,
@@ -326,6 +326,10 @@ def _cursor_access_tokens() -> list[str]:
             continue
         seen.add(tok)
         out.append(tok)
+    for tok in _cursor_tokens_keychain():
+        if tok not in seen:
+            seen.add(tok)
+            out.append(tok)
     return out
 
 
@@ -369,7 +373,9 @@ def fetch_cursor() -> list[Snapshot]:
         if status == 200 and isinstance(data, dict):
             token_ok = token
             break
-        # Stale JWT → try next source (keychain often lags IDE / API key).
+        # Stale/dead seat → try next source. Their JWTs can flap 401/200,
+        # so a one-off 200 is not proof of the live account — hence the
+        # auth.json-first order in _cursor_access_tokens.
         if status in (401, 403):
             continue
         break
@@ -380,10 +386,17 @@ def fetch_cursor() -> list[Snapshot]:
         return [Snapshot("Cursor", False, error=f"http {status}")]
 
     usage = data.get("planUsage") or {}
-    # Dashboard "Included in Pro" bars (settings UI no longer shows $):
-    #   Cursor Models  = autoPercentUsed
-    #   Other Models   = apiPercentUsed
-    # Cents still come from the same RPC (totalSpend / includedSpend / bonusSpend).
+    # Bars mirror the dashboard's «Included in Pro» card (verified against
+    # cursor.com/dashboard/spending 2026-10-04: Cursor Models showed 33% while
+    # autoPercentUsed said 30.7 — same metric, still catching up):
+    #   «Cursor»     = autoPercentUsed (Cursor Models / Grok / Composer)
+    #   «Cursor API» = apiPercentUsed (Other Models)
+    # Don't substitute includedSpend/limit or displayMessage: once the $20
+    # plan pool is consumed both claim «usage limit» / 100% while the
+    # dashboard bar keeps showing the per-bucket percent (~33%), and the
+    # $138 of overage is provider-absorbed bonus (remainingBonus=false), not
+    # on-demand spend. A $1/100% reading in Oct 2026 was a stale keychain
+    # seat token, not this field — the 401 fallthrough below handles it.
     auto_pct = float(usage.get("autoPercentUsed") or 0)
     api_pct = float(usage.get("apiPercentUsed") or 0)
     total = float(usage.get("totalSpend") or 0)

@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUI
 
 // MARK: - Snapshot model written by the pump app, read by the widget extension.
 
@@ -54,12 +53,6 @@ extension ProviderRow {
         if name.hasPrefix("Cursor") { return "CURSOR · PRO" }
         if name.hasPrefix("GLM") || name.hasPrefix("Grok") || name.hasPrefix("Kimi") { return "GLM · GROK · KIMI" }
         return "PAY-AS-YOU-GO"
-    }
-
-    var barColor: SwiftUI.Color {
-        if pct > 85 { return SwiftUI.Color(red: 1, green: 0.42, blue: 0.37) }
-        if pct > 60 { return SwiftUI.Color(red: 0.96, green: 0.71, blue: 0.27) }
-        return .primary
     }
 }
 
