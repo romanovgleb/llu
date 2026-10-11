@@ -21,5 +21,11 @@ sandbox container (`~/Library/Containers/ru.romanovgleb.llu.widget/Data/...`),
 then reloads the widget timeline. Build: `widget/build.sh` (requires full
 Xcode; the extension is sandboxed — macOS 26 requirement).
 
+**Tray icon:** hidden by default. The gauge extra uses an `isInserted` binding so
+the pump runs headless; removing a visible icon also only hides it (it used to
+quit the host and freeze the widget). Re-show: open `LLUWidget` again from
+Finder/Spotlight, or `open -a LLUWidget --args --reveal`. Enable launch-at-login
+from that menu so the pump comes back after reboot.
+
 Providers and their sources are documented in the pack:
 `~/.agents/skills/llm-finance/REFERENCE-usage.md`.

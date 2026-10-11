@@ -14,8 +14,10 @@ xcodebuild -project LLUWidget.xcodeproj \
   CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="" \
   build
 
+pkill -x LLUWidgetApp 2>/dev/null || true
 rm -rf "/Applications/LLUWidget.app"
 cp -R "build/Build/Products/Release/LLUWidgetApp.app" "/Applications/LLUWidget.app"
+# Cold-start only — `open` while already running re-shows the tray icon.
 open "/Applications/LLUWidget.app"
 echo "Installed to /Applications/LLUWidget.app."
 echo "Open Notification Center → Edit Widgets → add 'LLM Usage'."

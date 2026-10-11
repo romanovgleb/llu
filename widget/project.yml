@@ -31,6 +31,8 @@ targets:
       properties:
         LSUIElement: true
         CFBundleDisplayName: LLU Widget
+        CFBundleShortVersionString: "1.1"
+        CFBundleVersion: "1.1"
 
   LLUWidgetExtension:
     type: app-extension
@@ -49,5 +51,7 @@ targets:
       path: Widget/Info.plist
       properties:
         CFBundleDisplayName: LLU Widget
+        CFBundleShortVersionString: "1.1"
+        CFBundleVersion: "1.1"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension

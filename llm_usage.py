@@ -936,7 +936,10 @@ def main(argv: list[str] | None = None) -> int:
             ],
         }
         print(json.dumps(out, indent=2))
-        return 0 if all(r.ok for r in frame.rows) else 1
+        # Match --once: one live provider is enough. The Mac widget pump used to
+        # treat exit 1 as total failure and skip writing the snapshot, so a
+        # single dead Codex session froze every other bar for days.
+        return 0 if any(r.ok for r in frame.rows) else 1
 
     console = Console(highlight=False)
     if args.once:
