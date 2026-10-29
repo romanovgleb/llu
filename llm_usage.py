@@ -167,6 +167,22 @@ def _fmt_countdown_secs(secs: int, *, until: datetime | None = None) -> str:
     return f"{days}d {until.strftime('%b')} {until.day}"
 
 
+def _fmt_remaining_secs(secs: int) -> str:
+    """Pure time-until countdown (no calendar date) — ZCode reset-card style."""
+    if secs < 0:
+        return "due"
+    if secs < 3600:
+        return f"{secs // 60}m"
+    if secs < 86400:
+        h, m = divmod(secs // 60, 60)
+        return f"{h}h{m:02d}m"
+    days, rem = divmod(secs, 86400)
+    hours = rem // 3600
+    if hours:
+        return f"{days}d{hours}h"
+    return f"{days}d"
+
+
 def _fmt_reset(iso_or_ms: str | int | float | None, *, idle: str = "") -> str:
     if iso_or_ms is None or iso_or_ms == "":
         return idle
@@ -833,9 +849,10 @@ def _glm_banked_resets() -> list[Snapshot]:
                 soonest = dt
         detail = "avail" if n else ""
         if soonest is not None:
-            detail = _fmt_countdown_secs(
-                int((soonest - datetime.now().astimezone()).total_seconds()),
-                until=soonest,
+            # Soonest unused card of this type (5h vs weekly). Remaining
+            # countdown — not calendar date (easy to confuse with quota reset).
+            detail = _fmt_remaining_secs(
+                int((soonest - datetime.now().astimezone()).total_seconds())
             )
         return Snapshot(name, True, kind="count", amount=str(n), detail=detail)
 
