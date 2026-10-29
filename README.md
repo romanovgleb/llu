@@ -1,6 +1,7 @@
 # llu — live LLM usage TUI + Mac widget
 
-Live quota/balance meters for Codex, Cursor, GLM, Kimi, DeepSeek, Groq.
+Live quota/balance meters for Codex, Cursor, GLM (incl. banked 5h/weekly reset
+cards via ZCode login), Kimi, DeepSeek, Groq.
 
 ```bash
 llu                 # live, 60s refresh

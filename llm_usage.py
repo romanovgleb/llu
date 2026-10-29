@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import getpass
+import hashlib
 import json
 import os
 import platform
@@ -38,8 +41,20 @@ CODEX_RESET_CREDITS_API = (
 # ChatGPT OAuth client id embedded in the Codex CLI binary.
 CODEX_OAUTH_CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
 CODEX_OAUTH_TOKEN_URL = "https://auth.openai.com/oauth/token"
+# GLM Coding Plan reset cards (ZCode desktop inventory; same cards as z.ai Manage).
+# Status is GET-only here. Redeem is POST …/use with
+# {"idempotency_key": "<≤64 chars>", "reset_type": "FIVE_HOUR"|"WEEK"} —
+# weekly also clears 5h without spending a 5h card. Never call /use from llu.
+ZCODE_CREDENTIALS = Path.home() / ".zcode" / "v2" / "credentials.json"
+ZCODE_RESET_STATUS_API = "https://zcode.z.ai/api/v1/coding-plan/reset/status"
+# Sota often blackholes zcode.z.ai on Mac; jump via Tailscale hosts that reach it.
+ZCODE_JUMP_HOSTS = tuple(
+    h.strip()
+    for h in os.environ.get("LLU_ZCODE_JUMP", "rog,edge").split(",")
+    if h.strip()
+)
 # Cloudflare (api2.cursor.sh) bans Python-urllib's default User-Agent (error 1010).
-# Mirror a normal desktop browser so Dashboard RPCs and API-key exchange work.
+# Mirror a normal desktop browser so Dashboard RPCs work.
 CURSOR_HTTP_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -286,39 +301,17 @@ def _cursor_token_ide_db() -> str | None:
     return row[0].decode() if isinstance(row[0], bytes) else str(row[0])
 
 
-def _cursor_token_api_key() -> str | None:
-    """Exchange CURSOR_API_KEY → short-lived access JWT (Dashboard needs JWT)."""
-    key = os.environ.get("CURSOR_API_KEY") or ""
-    if not key:
-        return None
-    status, data = _http_json(
-        "POST",
-        f"{CURSOR_API}/auth/exchange_user_api_key",
-        headers={**CURSOR_HTTP_HEADERS, "Authorization": f"Bearer {key}"},
-        body={},
-    )
-    if status != 200 or not isinstance(data, dict):
-        return None
-    tok = data.get("accessToken")
-    return str(tok) if tok else None
-
-
 def _cursor_access_tokens() -> list[str]:
     """Candidate JWTs in preference order; duplicates dropped.
 
-    auth.json first — it is the agent CLI's live login and matches the
-    dashboard account. Keychain items (``cursor-user``, then ``cursor``) are
-    fallback only: after a seat switch they keep a dead seat whose JWT
-    intermittently returns 401 *and* 200, so a keychain-first order makes the
-    widget flip between accounts (Oct 2026: phantom $1.00 / Oct 30 cycle
-    ahead of the real $138 / Oct 16 one). Then API-key exchange, IDE DB.
-    Callers must still try until one authenticates.
+    auth.json first — agent CLI live OAuth login. Then IDE DB. Keychain is
+    last-resort only (phantom seats after switches). No CURSOR_API_KEY
+    exchange — session-only policy since 2026-10-05.
     """
     seen: set[str] = set()
     out: list[str] = []
     for getter in (
         _cursor_token_auth_json,
-        _cursor_token_api_key,
         _cursor_token_ide_db,
     ):
         tok = getter()
@@ -610,6 +603,248 @@ def fetch_codex() -> list[Snapshot]:
     return rows
 
 
+def _zcode_credential_secret() -> str:
+    env = os.environ.get("ZCODE_CREDENTIAL_SECRET")
+    if env:
+        return env
+    try:
+        user = getpass.getuser()
+    except Exception:
+        user = "unknown"
+    # Matches ZCode's Node os.platform() + os.homedir() + username fallback.
+    return f"zcode-credential-fallback:{sys.platform}:{Path.home()}:{user}"
+
+
+def _zcode_decrypt(blob: str, secret: str) -> str:
+    """Decrypt ZCode `enc:v1:` AES-256-GCM credential values."""
+    if not blob.startswith("enc:v1:"):
+        return blob
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    except ImportError as e:
+        raise RuntimeError("cryptography required for ZCode credentials") from e
+    parts = blob[len("enc:v1:") :].split(".")
+    if len(parts) != 3:
+        raise ValueError("bad enc:v1 blob")
+    pad = "=" * (-len(parts[0]) % 4)
+    iv = base64.urlsafe_b64decode(parts[0] + pad)
+    pad = "=" * (-len(parts[1]) % 4)
+    tag = base64.urlsafe_b64decode(parts[1] + pad)
+    pad = "=" * (-len(parts[2]) % 4)
+    ct = base64.urlsafe_b64decode(parts[2] + pad)
+    if len(iv) != 12 or len(tag) != 16:
+        raise ValueError("bad enc:v1 iv/tag")
+    key = hashlib.sha256(secret.encode()).digest()
+    return AESGCM(key).decrypt(iv, ct + tag, None).decode()
+
+
+def _zcode_coding_plan_tokens() -> tuple[str, str] | None:
+    """Return (zcode_jwt, zai_business_token) from ~/.zcode/v2/credentials.json."""
+    if not ZCODE_CREDENTIALS.is_file():
+        return None
+    try:
+        data = json.loads(ZCODE_CREDENTIALS.read_text())
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    raw_jwt = data.get("zcodejwttoken")
+    raw_zai = data.get("oauth:zai:access_token")
+    if not isinstance(raw_jwt, str) or not isinstance(raw_zai, str):
+        return None
+    secret = _zcode_credential_secret()
+    try:
+        return _zcode_decrypt(raw_jwt, secret), _zcode_decrypt(raw_zai, secret)
+    except Exception:
+        return None
+
+
+def _glm_reset_status_headers(zcode_jwt: str, zai_tok: str) -> dict[str, str]:
+    auth = zcode_jwt if zcode_jwt.lower().startswith("bearer ") else f"Bearer {zcode_jwt}"
+    return {
+        "Authorization": auth,
+        "X-Bigmodel-Authorization": zai_tok,
+        "Bigmodel-Target-Type": "PERSONAL",
+        "Accept": "application/json",
+        "User-Agent": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/128.0.0.0 Safari/537.36"
+        ),
+    }
+
+
+def _glm_reset_status_direct(zcode_jwt: str, zai_tok: str) -> tuple[int, object]:
+    # Short timeout: Sota often blackholes zcode.z.ai; fail fast into jump hosts.
+    h = _glm_reset_status_headers(zcode_jwt, zai_tok)
+    req = urllib.request.Request(ZCODE_RESET_STATUS_API, headers=h, method="GET")
+    try:
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            raw = resp.read().decode()
+            return resp.status, json.loads(raw) if raw else {}
+    except urllib.error.HTTPError as e:
+        raw = e.read().decode(errors="replace")
+        try:
+            payload = json.loads(raw) if raw else {}
+        except json.JSONDecodeError:
+            payload = {"error": raw[:200]}
+        return e.code, payload
+    except Exception as e:  # noqa: BLE001
+        return 0, {"error": str(e)}
+
+
+def _glm_reset_status_via_jump(
+    zcode_jwt: str,
+    zai_tok: str,
+    host: str,
+) -> tuple[int, object]:
+    """GET reset status on `host` (stdin script — tokens not in argv)."""
+    remote = f"""
+import json, urllib.request, urllib.error, sys
+zcode = {json.dumps(zcode_jwt)}
+zai = {json.dumps(zai_tok)}
+req = urllib.request.Request(
+    {json.dumps(ZCODE_RESET_STATUS_API)},
+    headers={{
+        "Authorization": ("Bearer " + zcode) if not zcode.lower().startswith("bearer ") else zcode,
+        "X-Bigmodel-Authorization": zai,
+        "Bigmodel-Target-Type": "PERSONAL",
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0",
+    }},
+    method="GET",
+)
+try:
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        raw = resp.read().decode()
+        print(resp.status)
+        print(raw)
+except urllib.error.HTTPError as e:
+    print(e.code)
+    print(e.read().decode(errors="replace"))
+except Exception as e:
+    print(0)
+    print(json.dumps({{"error": type(e).__name__ + ":" + str(e)}}))
+"""
+    try:
+        proc = subprocess.run(
+            [
+                "ssh",
+                "-o",
+                "BatchMode=yes",
+                "-o",
+                "ConnectTimeout=8",
+                "-o",
+                "StrictHostKeyChecking=accept-new",
+                host,
+                "python3",
+                "-",
+            ],
+            input=remote,
+            capture_output=True,
+            text=True,
+            timeout=35,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return 0, {"error": f"jump {host} failed"}
+    if proc.returncode != 0 and not proc.stdout.strip():
+        return 0, {"error": (proc.stderr or "jump failed")[:160]}
+    lines = proc.stdout.splitlines()
+    if not lines:
+        return 0, {"error": "jump empty"}
+    try:
+        status = int(lines[0].strip())
+    except ValueError:
+        return 0, {"error": "jump bad status"}
+    body_raw = "\n".join(lines[1:])
+    try:
+        payload = json.loads(body_raw) if body_raw else {}
+    except json.JSONDecodeError:
+        payload = {"error": body_raw[:200]}
+    return status, payload
+
+
+def _fetch_glm_reset_status(zcode_jwt: str, zai_tok: str) -> tuple[int, object]:
+    status, data = _glm_reset_status_direct(zcode_jwt, zai_tok)
+    if status == 200 and isinstance(data, dict):
+        return status, data
+    # Direct timeout / connect failure → Tailscale jump (Sota often blocks zcode.z.ai).
+    if status not in (0, None) and status < 500 and status != 200:
+        # Auth/application errors: don't bother jumping with the same tokens.
+        if status in (401, 403):
+            return status, data
+    for host in ZCODE_JUMP_HOSTS:
+        st, payload = _glm_reset_status_via_jump(zcode_jwt, zai_tok, host)
+        if st == 200 and isinstance(payload, dict):
+            return st, payload
+    return status, data
+
+
+def _glm_banked_resets() -> list[Snapshot]:
+    """Banked GLM Coding Plan reset cards (5h + weekly), ZCode inventory."""
+    tokens = _zcode_coding_plan_tokens()
+    if not tokens:
+        return [
+            Snapshot("GLM 5rst", False, error="no zcode login", kind="count"),
+            Snapshot("GLM wrst", False, error="no zcode login", kind="count"),
+        ]
+    zcode_jwt, zai_tok = tokens
+    status, data = _fetch_glm_reset_status(zcode_jwt, zai_tok)
+    if status != 200 or not isinstance(data, dict):
+        return [
+            Snapshot("GLM 5rst", False, error=f"http {status}", kind="count"),
+            Snapshot("GLM wrst", False, error=f"http {status}", kind="count"),
+        ]
+    # ZCode envelope: {code:0, data:{...}} ; tolerate unwrapped payloads.
+    payload = data.get("data") if isinstance(data.get("data"), dict) else data
+    if not isinstance(payload, dict):
+        return [
+            Snapshot("GLM 5rst", False, error="bad reset", kind="count"),
+            Snapshot("GLM wrst", False, error="bad reset", kind="count"),
+        ]
+    if data.get("code") not in (None, 0, 200) and "available_five_hour_resets" not in payload:
+        msg = str(data.get("msg") or "reset error")[:DETAIL_W]
+        return [
+            Snapshot("GLM 5rst", False, error=msg, kind="count"),
+            Snapshot("GLM wrst", False, error=msg, kind="count"),
+        ]
+
+    def _row(name: str, items: object) -> Snapshot:
+        cards = items if isinstance(items, list) else []
+        n = 0
+        soonest: datetime | None = None
+        for card in cards:
+            if not isinstance(card, dict):
+                continue
+            raw = card.get("expire_at")
+            try:
+                ms = float(raw)
+            except (TypeError, ValueError):
+                continue
+            # API uses epoch ms; ignore already-expired cards.
+            try:
+                dt = datetime.fromtimestamp(ms / 1000.0, tz=timezone.utc).astimezone()
+            except (OSError, OverflowError, ValueError):
+                continue
+            if dt <= datetime.now().astimezone():
+                continue
+            n += 1
+            if soonest is None or dt < soonest:
+                soonest = dt
+        detail = "avail" if n else ""
+        if soonest is not None:
+            detail = _fmt_countdown_secs(
+                int((soonest - datetime.now().astimezone()).total_seconds()),
+                until=soonest,
+            )
+        return Snapshot(name, True, kind="count", amount=str(n), detail=detail)
+
+    return [
+        _row("GLM 5rst", payload.get("available_five_hour_resets")),
+        _row("GLM wrst", payload.get("available_week_resets")),
+    ]
+
+
 def fetch_glm() -> list[Snapshot]:
     key = os.environ.get("ZAI_API_KEY") or os.environ.get("ZHIPU_API_KEY") or ""
     if not key:
@@ -650,7 +885,7 @@ def fetch_glm() -> list[Snapshot]:
                 pct=pct,
                 detail=_glm_window_reset(lim),
             )
-    return [five, week]
+    return [five, week, *_glm_banked_resets()]
 
 
 def fetch_kimi() -> list[Snapshot]:
@@ -793,6 +1028,8 @@ def collect() -> Frame:
         "Grok Bot",
         "GLM 5h",
         "GLM wk",
+        "GLM 5rst",
+        "GLM wrst",
         "Kimi 5h",
         "Kimi wk",
         "DeepSeek",
