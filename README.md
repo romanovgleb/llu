@@ -27,11 +27,9 @@ The desktop app's OAuth token expires within an hour, so llu mints one from the
 chat.z.ai browser session (`token` cookie in Brave/Chrome → `POST
 api.z.ai/api/auth/z/login`), cached 0600 at `~/.cache/llm-finance/zai_web_token`.
 
-**Tray icon:** hidden by default. The gauge extra uses an `isInserted` binding so
-the pump runs headless; removing a visible icon also only hides it (it used to
-quit the host and freeze the widget). Re-show: open `LLUWidget` again from
-Finder/Spotlight, or `open -a LLUWidget --args --reveal`. Enable launch-at-login
-from that menu so the pump comes back after reboot.
+**Headless:** the pump has no menu bar icon and no window; it just refreshes the
+snapshot every 60 s. Enable launch-at-login from System Settings → General →
+Login Items so the pump comes back after reboot.
 
 Providers and their sources are documented in the pack:
 `~/.agents/skills/llm-finance/REFERENCE-usage.md`.
