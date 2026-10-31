@@ -48,130 +48,28 @@ struct LLUWidgetBundle: WidgetBundle {
     var body: some Widget { LLUUsageWidget() }
 }
 
-// MARK: - Groups (bb-style: mono logo + name + badge)
-
-struct GroupMeta {
-    let key: String
-    let logo: String
-    let name: String
-    let badge: String?
-
-    static let all: [GroupMeta] = [
-        GroupMeta(key: "CODEX", logo: "✳", name: "romanovgleb@gmail.com", badge: "Plus"),
-        GroupMeta(key: "CURSOR", logo: "⬡", name: "Cursor", badge: "Pro"),
-        GroupMeta(key: "GLM", logo: "Т", name: "GLM · Kimi · Grok", badge: "GLM lite"),
-        GroupMeta(key: "PAYG", logo: "$", name: "Pay-as-you-go", badge: nil),
-    ]
-
-    static func `for`(_ key: String) -> GroupMeta {
-        all.first { $0.key == key } ?? GroupMeta(key: key, logo: "•", name: key, badge: nil)
-    }
-}
+// MARK: - Root
 
 struct LLURootView: View {
     @Environment(\.widgetFamily) private var family
     let entry: LLUEntry
 
     var body: some View {
-        Group {
-            let groups = Dictionary(grouping: entry.snapshot.providers, by: \.groupName)
-            let order = ["CODEX", "CURSOR", "GLM", "PAYG"]
-            switch family {
-            case .systemSmall:
-                LLUSmallView(snapshot: entry.snapshot)
-            case .systemMedium:
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(order.prefix(2), id: \.self) { g in
-                        groupBlock(name: g, rows: groups[g] ?? [])
-                    }
-                }
-            default:
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(order, id: \.self) { g in
-                        groupBlock(name: g, rows: groups[g] ?? [])
-                    }
+        if family == .systemSmall {
+            LLUSmallView(snapshot: entry.snapshot)
+                .padding(10)
+        } else {
+            let groups = WidgetLayout.groups(entry.snapshot.providers)
+            VStack(alignment: .leading, spacing: 0) {
+                if family == .systemMedium {
+                    UsageListView(groups: Array(groups.prefix(3)), compact: true)
+                } else {
+                    UsageListView(groups: groups)
                 }
             }
-        }
-        .padding(.horizontal, 13)
-        .padding(.vertical, 9)
-    }
-
-    private func groupBlock(name: String, rows: [ProviderRow]) -> some View {
-        let meta = GroupMeta.for(name)
-        return VStack(alignment: .leading, spacing: 3) {
-            HStack(spacing: 6) {
-                Text(meta.logo)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
-                    .frame(width: 15)
-                Text(meta.name)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
-                if let badge = meta.badge {
-                    Spacer()
-                    Text(badge)
-                        .font(.system(size: 9.5, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal, 6).padding(.vertical, 1.5)
-                        .background(Color.secondary.opacity(0.14))
-                        .clipShape(Capsule())
-                }
-            }
-            .padding(.bottom, 2)
-            ForEach(rows) { row in
-                RowView(row: row)
-            }
-        }
-        .padding(.bottom, 9)
-    }
-}
-
-// MARK: - Rows
-
-struct RowView: View {
-    let row: ProviderRow
-
-    var body: some View {
-        HStack(spacing: 7) {
-            Text(row.name)
-                .font(.system(size: 11))
-                .foregroundColor(row.ok ? .primary : .red)
-                .lineLimit(1)
-                .frame(width: 56, alignment: .leading)
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.secondary.opacity(0.10))
-                    Capsule()
-                        .fill(LinearGradient(
-                            stops: [
-                                .init(color: Color.primary.opacity(0.45), location: 0),
-                                .init(color: Color.primary.opacity(0.95), location: 1),
-                            ],
-                            startPoint: .leading, endPoint: .trailing))
-                        .frame(width: max(2, geo.size.width * min(row.pct, 100) / 100))
-                        .opacity(row.barIsGhost ? 0.35 : 1)
-                }
-            }
-            .frame(height: 2)
-            .padding(.vertical, 1)
-            Text(row.value)
-                .font(.system(size: 11, weight: .semibold))
-                .monospacedDigit()
-                .frame(width: 52, alignment: .trailing)
-            Text(row.aux)
-                .font(.system(size: 10))
-                .foregroundColor(.secondary)
-                .monospacedDigit()
-                .frame(width: 56, alignment: .trailing)
-                .lineLimit(1)
-            Text(row.detail)
-                .font(.system(size: 9.5))
-                .foregroundColor(.secondary)
-                .monospacedDigit()
-                .frame(width: 46, alignment: .trailing)
-                .lineLimit(1)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding(.horizontal, 13)
+            .padding(.vertical, 8)
         }
     }
 }
@@ -181,7 +79,8 @@ struct RowView: View {
 struct LLUSmallView: View {
     let snapshot: LLUSnapshot
 
-    private var pick: (String) -> ProviderRow? { { prefix in snapshot.providers.first { $0.name.hasPrefix(prefix) } } }
+    private var groups: [UsageGroup] { WidgetLayout.groups(snapshot.providers) }
+    private var dense: [UsageGroup] { Array(groups.prefix(4)) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -190,20 +89,31 @@ struct LLUSmallView: View {
                 Spacer()
                 Text(timestamp).font(.system(size: 9)).foregroundColor(.secondary)
             }
-            Spacer()
-            if let row = pick("Codex 5h") { RowView(row: row) }
-            if let row = pick("Codex wk") { RowView(row: row) }
-            if let row = pick("Cursor") { RowView(row: row) }
-            if let row = pick("GLM 5h") { RowView(row: row) }
-            Spacer()
-            HStack {
-                if let cursor = pick("Cursor") { Text(cursor.amount).font(.system(size: 9.5, weight: .semibold)).monospacedDigit() }
-                Spacer()
-                if let rst = pick("Codex rst") {
-                    Text("rst ").font(.system(size: 9.5)).foregroundColor(.secondary)
-                        + Text(rst.amount).font(.system(size: 9.5, weight: .semibold)).monospacedDigit()
+            Spacer(minLength: 2)
+            ForEach(dense) { group in
+                HStack(spacing: 5) {
+                    Text(group.meta.name)
+                        .font(.system(size: 10))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                        .frame(width: 48, alignment: .leading)
+                    if let tier = group.tiers.max(by: { $0.row.pct < $1.row.pct }) {
+                        BarView(pct: tier.row.pct, ghost: tier.row.barIsGhost)
+                            .frame(height: 2)
+                        Text(tier.row.value)
+                            .font(.system(size: 10, weight: .semibold))
+                            .monospacedDigit()
+                            .lineLimit(1)
+                            .frame(width: 38, alignment: .trailing)
+                    } else {
+                        Spacer()
+                        Text("—").font(.system(size: 10)).foregroundColor(.secondary)
+                            .frame(width: 38, alignment: .trailing)
+                    }
                 }
+                .frame(height: 13)
             }
+            Spacer(minLength: 0)
         }
     }
 

@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import platform
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -19,6 +20,7 @@ import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
+from tempfile import NamedTemporaryFile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -68,6 +70,8 @@ CURSOR_HTTP_HEADERS = {
 TIMEOUT_S = 15
 # Groq Whisper free tier (https://console.groq.com/docs/rate-limits)
 GROQ_STT_USAGE = Path.home() / ".cache" / "llm-finance" / "groq_stt_usage.json"
+ZAI_WEB_TOKEN_CACHE = Path.home() / ".cache" / "llm-finance" / "zai_web_token"
+ZAI_BUSINESS_LOGIN = "https://api.z.ai/api/auth/z/login"
 GROQ_FREE_ASH = 7200  # audio seconds per hour
 GROQ_FREE_ASD = 28800  # audio seconds per day
 GROQ_FREE_RPD = 2000
@@ -92,6 +96,7 @@ class Snapshot:
     error: str = ""
     kind: str = "quota"  # quota | balance | spend
     amount: str = ""  # spend/balance: shown in the shared value column
+    plan: str = ""  # subscription label for the widget group header
 
 
 @dataclass
@@ -355,20 +360,6 @@ def _cursor_period_usage(token: str) -> tuple[int, object]:
     )
 
 
-def _cursor_sand_usage(token: str) -> tuple[int, object]:
-    """Grok Bot weekly allowance (dashboard «Grok Bot» bar)."""
-    return _http_json(
-        "POST",
-        f"{CURSOR_API}/aiserver.v1.DashboardService/GetSandUsageStatus",
-        headers={
-            **CURSOR_HTTP_HEADERS,
-            "Authorization": f"Bearer {token}",
-            "Connect-Protocol-Version": "1",
-        },
-        body={},
-    )
-
-
 def fetch_cursor() -> list[Snapshot]:
     tokens = _cursor_access_tokens()
     if not tokens:
@@ -410,7 +401,7 @@ def fetch_cursor() -> list[Snapshot]:
     api_pct = float(usage.get("apiPercentUsed") or 0)
     total = float(usage.get("totalSpend") or 0)
     reset = _fmt_reset(data.get("billingCycleEnd"))
-    rows = [
+    return [
         Snapshot(
             "Cursor",
             True,
@@ -426,29 +417,6 @@ def fetch_cursor() -> list[Snapshot]:
             detail=reset,
         ),
     ]
-
-    # Separate weekly Grok Bot pool (sand-*). Best-effort — never drop plan bars.
-    sand_st, sand = _cursor_sand_usage(token_ok)
-    if sand_st == 200 and isinstance(sand, dict) and sand.get("hasNonZeroIncludedLimit"):
-        period_start = sand.get("currentPeriodStart")
-        # Weekly window: period start + 7d ≈ next reset (dashboard: "Resets weekly").
-        grok_detail = "weekly"
-        try:
-            if isinstance(period_start, str) and period_start:
-                start = datetime.fromisoformat(period_start.replace("Z", "+00:00"))
-                end_ms = int((start.timestamp() + 7 * 86400) * 1000)
-                grok_detail = _fmt_reset(end_ms, idle="weekly") or "weekly"
-        except (ValueError, OSError, OverflowError, TypeError):
-            grok_detail = "weekly"
-        rows.append(
-            Snapshot(
-                "Grok Bot",
-                True,
-                pct=float(sand.get("usagePercent") or 0),
-                detail=grok_detail,
-            )
-        )
-    return rows
 
 
 def _codex_banked_resets(
@@ -597,7 +565,12 @@ def fetch_codex() -> list[Snapshot]:
         return [Snapshot("Codex", False, error="bad quota")]
 
     # Detail = window countdown only (not plan_type — "plus 6d …" looked like expiry).
-    rows = [Snapshot("Codex 5h", True, pct=pct, detail=_codex_window_reset(window))]
+    plan = str(data.get("plan_type") or "").capitalize()
+    rows = [
+        Snapshot(
+            "Codex 5h", True, pct=pct, detail=_codex_window_reset(window), plan=plan
+        )
+    ]
 
     weekly = rate_limit.get("secondary_window") or {}
     weekly_used = weekly.get("used_percent")
@@ -613,6 +586,7 @@ def fetch_codex() -> list[Snapshot]:
                     True,
                     pct=weekly_pct,
                     detail=_codex_window_reset(weekly),
+                    plan=plan,
                 )
             )
     rows.append(_codex_banked_resets(data, headers=headers))
@@ -673,6 +647,159 @@ def _zcode_coding_plan_tokens() -> tuple[str, str] | None:
         return _zcode_decrypt(raw_jwt, secret), _zcode_decrypt(raw_zai, secret)
     except Exception:
         return None
+
+
+CHROMIUM_BROWSERS = (
+    ("Brave Safe Storage", "Brave", "BraveSoftware/Brave-Browser"),
+    ("Chrome Safe Storage", "Chrome", "Google/Chrome"),
+)
+
+
+def _chromium_cookie_key(service: str, user: str) -> bytes | None:
+    try:
+        proc = subprocess.run(
+            [
+                "/usr/bin/security",
+                "-q",
+                "find-generic-password",
+                "-w",
+                "-a",
+                user,
+                "-s",
+                service,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    password = proc.stdout.strip()
+    if proc.returncode != 0 or not password:
+        return None
+    try:
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+    except ImportError:
+        return None
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA1(),
+        length=16,
+        salt=b"saltysalt",
+        iterations=1003,
+    )
+    return kdf.derive(password.encode())
+
+
+def _decrypt_chromium_cookie(encrypted: bytes, key: bytes) -> str | None:
+    if not encrypted or encrypted[:3] not in (b"v10", b"v11"):
+        return None
+    try:
+        from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    except ImportError:
+        return None
+    try:
+        decryptor = Cipher(algorithms.AES(key), modes.CBC(b" " * 16)).decryptor()
+        raw = decryptor.update(encrypted[3:]) + decryptor.finalize()
+        pad = raw[-1]
+        if pad < 1 or pad > 16:
+            return None
+        # Chromium prepends a 32-byte SHA256 host digest to the value.
+        return raw[:-pad][32:].decode()
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _zai_web_tokens_from_browser() -> list[str]:
+    """chat.z.ai session token from Brave/Chrome (same account as ZCode)."""
+    out: list[str] = []
+    for service, user, rel in CHROMIUM_BROWSERS:
+        base = Path.home() / "Library/Application Support" / rel
+        if not base.is_dir():
+            continue
+        key: bytes | None = None
+        for profile in sorted(base.iterdir()):
+            for relpath in ("Cookies", "Network/Cookies"):
+                db_path = profile / relpath
+                if not db_path.is_file():
+                    continue
+                if key is None:
+                    key = _chromium_cookie_key(service, user)
+                try:
+                    with NamedTemporaryFile(suffix=".db") as tmp:
+                        shutil.copy2(db_path, tmp.name)
+                        con = sqlite3.connect(tmp.name)
+                        try:
+                            cur = con.execute(
+                                "SELECT value, encrypted_value FROM cookies "
+                                "WHERE host_key LIKE ? AND name = ? "
+                                "ORDER BY expires_utc DESC",
+                                ("%z.ai%", "token"),
+                            )
+                            for value, encrypted in cur:
+                                token = value or None
+                                if not token and encrypted and key:
+                                    token = _decrypt_chromium_cookie(encrypted, key)
+                                if token and token not in out:
+                                    out.append(token)
+                        finally:
+                            con.close()
+                except (OSError, sqlite3.Error):
+                    continue
+    return out
+
+
+def _read_cached_zai_web_token() -> str | None:
+    try:
+        token = ZAI_WEB_TOKEN_CACHE.read_text().strip()
+    except OSError:
+        return None
+    return token or None
+
+
+def _cache_zai_web_token(token: str) -> None:
+    try:
+        ZAI_WEB_TOKEN_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        ZAI_WEB_TOKEN_CACHE.write_text(token)
+        ZAI_WEB_TOKEN_CACHE.chmod(0o600)
+    except OSError:
+        pass
+
+
+def _zai_business_token() -> str | None:
+    """Exchange the chat.z.ai web session for a coding-plan business token.
+
+    The ZCode desktop OAuth token in credentials.json is short-lived and goes
+    stale within an hour of the last ZCode launch. The browser session outlives
+    it, and `/api/auth/z/login` mints the token the reset endpoint wants.
+    """
+    candidates: list[str] = []
+    cached = _read_cached_zai_web_token()
+    if cached:
+        candidates.append(cached)
+    for token in _zai_web_tokens_from_browser():
+        if token not in candidates:
+            candidates.append(token)
+    for web_token in candidates:
+        status, data = _http_json(
+            "POST",
+            ZAI_BUSINESS_LOGIN,
+            headers={"Content-Type": "application/json"},
+            body={"token": web_token},
+        )
+        if status != 200 or not isinstance(data, dict):
+            continue
+        if data.get("code") not in (None, 0, 200):
+            continue
+        payload = data.get("data")
+        if not isinstance(payload, dict):
+            continue
+        token = payload.get("access_token")
+        if isinstance(token, str) and token:
+            if web_token != cached:
+                _cache_zai_web_token(web_token)
+            return token
+    return None
 
 
 def _glm_reset_status_headers(zcode_jwt: str, zai_tok: str) -> dict[str, str]:
@@ -797,33 +924,27 @@ def _fetch_glm_reset_status(zcode_jwt: str, zai_tok: str) -> tuple[int, object]:
 
 
 def _glm_banked_resets() -> list[Snapshot]:
-    """Banked GLM Coding Plan reset cards (5h + weekly), ZCode inventory."""
+    """Banked GLM Coding Plan reset cards (5h + weekly), ZCode inventory.
+
+    Missing or expired ZCode credentials are not an error state for the
+    dashboard: the quota bars are live and the reset line simply drops out.
+    """
     tokens = _zcode_coding_plan_tokens()
     if not tokens:
-        return [
-            Snapshot("GLM 5rst", False, error="no zcode login", kind="count"),
-            Snapshot("GLM wrst", False, error="no zcode login", kind="count"),
-        ]
+        return []
     zcode_jwt, zai_tok = tokens
+    business = _zai_business_token()
+    if business:
+        zai_tok = business
     status, data = _fetch_glm_reset_status(zcode_jwt, zai_tok)
     if status != 200 or not isinstance(data, dict):
-        return [
-            Snapshot("GLM 5rst", False, error=f"http {status}", kind="count"),
-            Snapshot("GLM wrst", False, error=f"http {status}", kind="count"),
-        ]
+        return []
     # ZCode envelope: {code:0, data:{...}} ; tolerate unwrapped payloads.
     payload = data.get("data") if isinstance(data.get("data"), dict) else data
     if not isinstance(payload, dict):
-        return [
-            Snapshot("GLM 5rst", False, error="bad reset", kind="count"),
-            Snapshot("GLM wrst", False, error="bad reset", kind="count"),
-        ]
+        return []
     if data.get("code") not in (None, 0, 200) and "available_five_hour_resets" not in payload:
-        msg = str(data.get("msg") or "reset error")[:DETAIL_W]
-        return [
-            Snapshot("GLM 5rst", False, error=msg, kind="count"),
-            Snapshot("GLM wrst", False, error=msg, kind="count"),
-        ]
+        return []
 
     def _row(name: str, items: object) -> Snapshot:
         cards = items if isinstance(items, list) else []
@@ -881,8 +1002,9 @@ def fetch_glm() -> list[Snapshot]:
             message = "no coding plan"
         return [Snapshot("GLM", False, error=message)]
     payload = data.get("data") or {}
-    five = Snapshot("GLM 5h", True, pct=0.0, detail="idle")
-    week = Snapshot("GLM wk", True, pct=0.0)
+    plan = str(payload.get("level") or "").capitalize()
+    five = Snapshot("GLM 5h", True, pct=0.0, detail="idle", plan=plan)
+    week = Snapshot("GLM wk", True, pct=0.0, plan=plan)
     for lim in payload.get("limits") or []:
         # API returns CREDIT_LIMIT on coding plans; TOKENS_LIMIT is the legacy name.
         if lim.get("type") not in ("CREDIT_LIMIT", "TOKENS_LIMIT"):
@@ -894,6 +1016,7 @@ def fetch_glm() -> list[Snapshot]:
                 True,
                 pct=pct,
                 detail=_glm_window_reset(lim, idle_if_empty=True),
+                plan=plan,
             )
         elif lim.get("unit") == 6:
             week = Snapshot(
@@ -901,6 +1024,7 @@ def fetch_glm() -> list[Snapshot]:
                 True,
                 pct=pct,
                 detail=_glm_window_reset(lim),
+                plan=plan,
             )
     return [five, week, *_glm_banked_resets()]
 
@@ -986,6 +1110,7 @@ def fetch_deepseek() -> list[Snapshot]:
             True,
             kind="balance",
             amount=f"${total:.2f}",
+            plan="PAYG",
         )
     ]
 
@@ -1021,12 +1146,14 @@ def fetch_groq_stt() -> list[Snapshot]:
             True,
             pct=_pct(hour_used, GROQ_FREE_ASH),
             detail=f"{hour_used / 60.0:.0f}m / 2h",
+            plan="Free",
         ),
         Snapshot(
             "Groq day",
             True,
             pct=_pct(day_used, GROQ_FREE_ASD),
             detail=f"{day_used / 60.0:.0f}m / 8h",
+            plan="Free",
         ),
     ]
 
@@ -1042,7 +1169,6 @@ def collect() -> Frame:
         "Codex",  # login / http / refresh errors (ok rows use Codex 5h/wk/rst)
         "Cursor",
         "Cursor API",
-        "Grok Bot",
         "GLM 5h",
         "GLM wk",
         "GLM 5rst",
@@ -1185,6 +1311,7 @@ def main(argv: list[str] | None = None) -> int:
                     "error": r.error,
                     "kind": r.kind,
                     "amount": r.amount,
+                    "plan": r.plan,
                 }
                 for r in frame.rows
             ],

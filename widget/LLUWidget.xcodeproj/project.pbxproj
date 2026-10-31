@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		06369AE25AA2AED8D0D5DEA6 /* LLUWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 983CBD32AD4FC2287740FE28 /* LLUWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5FB8491E160C047B5F34792A /* LLUUsageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E76826DDEFF0AC542EFA01C /* LLUUsageViews.swift */; };
 		C3850E44FC424269313CA98A /* LLUModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326306CA89D4C6521338C11 /* LLUModel.swift */; };
 		C5920AA36348210CCBF5929A /* LLUWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E209076F30129316E0AE5D2 /* LLUWidgets.swift */; };
+		C77A5212D9C19C0AC6450CBF /* LLUUsageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E76826DDEFF0AC542EFA01C /* LLUUsageViews.swift */; };
 		CF9601ED156A0E916F79E23A /* LLUPump.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */; };
 		EC4510A3417CB4F638F70486 /* LLUApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407161488B800EEAAE562064 /* LLUApp.swift */; };
 		FB739EE7C2245C39A03035D2 /* LLUModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326306CA89D4C6521338C11 /* LLUModel.swift */; };
@@ -40,6 +42,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2E76826DDEFF0AC542EFA01C /* LLUUsageViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUUsageViews.swift; sourceTree = "<group>"; };
 		407161488B800EEAAE562064 /* LLUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUApp.swift; sourceTree = "<group>"; };
 		43168F96675E803CC0BBFD56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		673CFB4B43B2F30D5D490EF8 /* LLUPump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLUPump.swift; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				E326306CA89D4C6521338C11 /* LLUModel.swift */,
+				2E76826DDEFF0AC542EFA01C /* LLUUsageViews.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -187,6 +191,7 @@
 				EC4510A3417CB4F638F70486 /* LLUApp.swift in Sources */,
 				FB739EE7C2245C39A03035D2 /* LLUModel.swift in Sources */,
 				CF9601ED156A0E916F79E23A /* LLUPump.swift in Sources */,
+				5FB8491E160C047B5F34792A /* LLUUsageViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3850E44FC424269313CA98A /* LLUModel.swift in Sources */,
+				C77A5212D9C19C0AC6450CBF /* LLUUsageViews.swift in Sources */,
 				C5920AA36348210CCBF5929A /* LLUWidgets.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

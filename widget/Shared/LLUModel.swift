@@ -10,6 +10,8 @@ struct ProviderRow: Codable, Identifiable {
     let detail: String
     let kind: String      // quota | spend | count | balance
     let amount: String
+    let plan: String?
+    let error: String?
 }
 
 struct LLUSnapshot: Codable {
@@ -17,21 +19,18 @@ struct LLUSnapshot: Codable {
     var providers: [ProviderRow]
 
     static let sample = LLUSnapshot(fetchedAt: Date(), providers: [
-        ProviderRow(name: "Codex 5h", ok: true, pct: 0, detail: "5h00m", kind: "quota", amount: ""),
-        ProviderRow(name: "Codex wk", ok: true, pct: 0, detail: "6d Oct 10", kind: "quota", amount: ""),
-        ProviderRow(name: "Codex rst", ok: true, pct: 0, detail: "18d Oct 22", kind: "count", amount: "2"),
-        ProviderRow(name: "Cursor", ok: true, pct: 25.5, detail: "12d Oct 16", kind: "spend", amount: "$114.82"),
-        ProviderRow(name: "Cursor API", ok: true, pct: 0, detail: "12d Oct 16", kind: "quota", amount: ""),
-        ProviderRow(name: "Grok Bot", ok: true, pct: 0, detail: "5d Oct 9", kind: "quota", amount: ""),
-        ProviderRow(name: "GLM 5h", ok: true, pct: 1, detail: "4h57m", kind: "quota", amount: ""),
-        ProviderRow(name: "GLM wk", ok: true, pct: 1, detail: "4d Oct 9", kind: "quota", amount: ""),
-        ProviderRow(name: "GLM 5rst", ok: true, pct: 0, detail: "23d13h", kind: "count", amount: "4"),
-        ProviderRow(name: "GLM wrst", ok: true, pct: 0, detail: "23d13h", kind: "count", amount: "7"),
-        ProviderRow(name: "Kimi 5h", ok: true, pct: 0, detail: "", kind: "quota", amount: ""),
-        ProviderRow(name: "Kimi wk", ok: true, pct: 0, detail: "", kind: "quota", amount: ""),
-        ProviderRow(name: "DeepSeek", ok: true, pct: 0, detail: "", kind: "balance", amount: "$14.88"),
-        ProviderRow(name: "Groq hr", ok: true, pct: 0, detail: "0m / 2h", kind: "quota", amount: ""),
-        ProviderRow(name: "Groq day", ok: true, pct: 0, detail: "0m / 8h", kind: "quota", amount: ""),
+        ProviderRow(name: "Codex 5h", ok: true, pct: 16, detail: "4h27m", kind: "quota", amount: "", plan: "Plus", error: ""),
+        ProviderRow(name: "Codex wk", ok: true, pct: 52, detail: "5d Nov 5", kind: "quota", amount: "", plan: "Plus", error: ""),
+        ProviderRow(name: "Codex rst", ok: true, pct: 0, detail: "6d Nov 7", kind: "count", amount: "1", plan: nil, error: ""),
+        ProviderRow(name: "Cursor", ok: true, pct: 78, detail: "11d Nov 12", kind: "spend", amount: "$353.02", plan: nil, error: ""),
+        ProviderRow(name: "Cursor API", ok: true, pct: 0, detail: "11d Nov 12", kind: "quota", amount: "", plan: nil, error: ""),
+        ProviderRow(name: "GLM 5h", ok: true, pct: 8, detail: "4h33m", kind: "quota", amount: "", plan: "Lite", error: ""),
+        ProviderRow(name: "GLM wk", ok: true, pct: 72, detail: "5d Nov 6", kind: "quota", amount: "", plan: "Lite", error: ""),
+        ProviderRow(name: "Kimi 5h", ok: true, pct: 0, detail: "", kind: "quota", amount: "", plan: nil, error: ""),
+        ProviderRow(name: "Kimi wk", ok: true, pct: 0, detail: "", kind: "quota", amount: "", plan: nil, error: ""),
+        ProviderRow(name: "DeepSeek", ok: true, pct: 0, detail: "", kind: "balance", amount: "$14.06", plan: "PAYG", error: ""),
+        ProviderRow(name: "Groq hr", ok: true, pct: 0, detail: "0m / 2h", kind: "quota", amount: "", plan: "Free", error: ""),
+        ProviderRow(name: "Groq day", ok: true, pct: 0, detail: "0m / 8h", kind: "quota", amount: "", plan: "Free", error: ""),
     ])
 }
 
@@ -45,16 +44,16 @@ extension ProviderRow {
         }
     }
 
-    /// Dim secondary column: dollar spend next to plan %.
-    var aux: String { kind == "spend" ? amount : "" }
-
     var barIsGhost: Bool { kind == "balance" || kind == "count" }
 
     var groupName: String {
         if name.hasPrefix("Codex") { return "CODEX" }
         if name.hasPrefix("Cursor") { return "CURSOR" }
-        if name.hasPrefix("GLM") || name.hasPrefix("Grok") || name.hasPrefix("Kimi") { return "GLM" }
-        return "PAYG"
+        if name.hasPrefix("GLM") { return "GLM" }
+        if name.hasPrefix("Kimi") { return "KIMI" }
+        if name.hasPrefix("Groq") { return "GROQ" }
+        if name.hasPrefix("DeepSeek") { return "DEEPSEEK" }
+        return "OTHER"
     }
 }
 

@@ -30,7 +30,9 @@ enum LLUPump {
                 pct: (p["pct"] as? Double) ?? ((p["pct"] as? NSNumber)?.doubleValue ?? 0),
                 detail: p["detail"] as? String ?? "",
                 kind: p["kind"] as? String ?? "quota",
-                amount: p["amount"] as? String ?? "")
+                amount: p["amount"] as? String ?? "",
+                plan: p["plan"] as? String,
+                error: p["error"] as? String ?? "")
         }
         // Prefer writing partial success (some ok:false rows) over freezing the
         // last good snapshot when one provider is down.

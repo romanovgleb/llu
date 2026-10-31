@@ -22,6 +22,11 @@ sandbox container (`~/Library/Containers/ru.romanovgleb.llu.widget/Data/...`),
 then reloads the widget timeline. Build: `widget/build.sh` (requires full
 Xcode; the extension is sandboxed — macOS 26 requirement).
 
+**Reset cards:** GLM 5h/weekly banked resets need a fresh ZCode business token.
+The desktop app's OAuth token expires within an hour, so llu mints one from the
+chat.z.ai browser session (`token` cookie in Brave/Chrome → `POST
+api.z.ai/api/auth/z/login`), cached 0600 at `~/.cache/llm-finance/zai_web_token`.
+
 **Tray icon:** hidden by default. The gauge extra uses an `isInserted` binding so
 the pump runs headless; removing a visible icon also only hides it (it used to
 quit the host and freeze the widget). Re-show: open `LLUWidget` again from
